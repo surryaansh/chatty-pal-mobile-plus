@@ -16,11 +16,11 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const isUser = message.role === 'user';
   
   return (
-    <div className={`py-6 ${isUser ? 'bg-transparent' : 'bg-zinc-800/30'}`}>
+    <div className={`py-5 ${isUser ? 'bg-transparent' : 'bg-gray-800/30'}`}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-4">
-          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs
-            ${isUser ? 'bg-violet-500' : 'bg-teal-500'}`}>
+        <div className="flex items-start gap-4">
+          <div className={`w-8 h-8 rounded-sm flex items-center justify-center text-white text-xs
+            ${isUser ? 'bg-purple-500' : 'bg-teal-500'}`}>
             {isUser ? 'U' : 'AI'}
           </div>
           <div className="flex-1">

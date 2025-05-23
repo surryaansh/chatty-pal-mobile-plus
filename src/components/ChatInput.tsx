@@ -25,10 +25,10 @@ const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) => {
   };
   
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 mb-6">
+    <div className="w-full max-w-3xl mx-auto px-4 mb-4">
       <div className="relative">
         <textarea
-          className="w-full resize-none p-3 pr-12 bg-chatgpt-input rounded-lg border border-zinc-700 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+          className="w-full resize-none p-3 pr-12 bg-zinc-700/50 rounded-lg border border-zinc-600 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-500"
           rows={1}
           placeholder="Send a message"
           value={message}
@@ -36,14 +36,14 @@ const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) => {
           onKeyDown={handleKeyDown}
           disabled={disabled}
           style={{
-            minHeight: '44px',
+            minHeight: '48px',
             maxHeight: '200px',
           }}
         />
         <div className="absolute right-2 bottom-1.5">
           {message.trim() ? (
             <button
-              className="p-1.5 rounded-md bg-green-700 hover:bg-green-600 text-white disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-1.5 rounded-md bg-green-600 hover:bg-green-500 text-white disabled:opacity-40 disabled:cursor-not-allowed"
               onClick={handleSendMessage}
               disabled={disabled}
             >

@@ -18,11 +18,11 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   
   return (
     <>
-      <div className={`${isMobile ? 'absolute inset-y-0 left-0 z-50' : 'flex-shrink-0'} h-full w-64 bg-chatgpt-sidebar flex flex-col transition-all duration-300`}>
-        <div className="p-3">
+      <div className={`${isMobile ? 'absolute inset-y-0 left-0 z-50' : 'flex-shrink-0'} h-full w-64 bg-zinc-900 flex flex-col transition-all duration-300`}>
+        <div className="p-2">
           <Button 
             variant="outline" 
-            className="w-full justify-start gap-2 text-sm text-white border-zinc-700 hover:bg-zinc-700 bg-transparent"
+            className="w-full justify-start gap-2 text-sm text-white border-zinc-700 hover:bg-zinc-800 bg-transparent"
             onClick={() => window.location.reload()}
           >
             <Plus size={16} />
@@ -32,28 +32,28 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
         
         <div className="flex-1 overflow-y-auto p-2">
           <div className="space-y-1">
-            <button className="w-full flex items-center gap-2 p-3 rounded-md text-gray-300 text-sm hover:bg-zinc-700">
-              <MessageSquare size={16} />
+            <button className="w-full flex items-center gap-2 p-2.5 rounded-md text-gray-300 text-sm hover:bg-zinc-800">
+              <MessageSquare size={15} />
               <span className="text-left truncate">Previous conversation 1</span>
             </button>
-            <button className="w-full flex items-center gap-2 p-3 rounded-md text-gray-300 text-sm hover:bg-zinc-700">
-              <MessageSquare size={16} />
+            <button className="w-full flex items-center gap-2 p-2.5 rounded-md text-gray-300 text-sm hover:bg-zinc-800">
+              <MessageSquare size={15} />
               <span className="text-left truncate">Previous conversation 2</span>
             </button>
           </div>
         </div>
         
-        <div className="mt-auto border-t border-zinc-700">
+        <div className="mt-auto border-t border-zinc-800">
           <button 
             onClick={() => setIsApiKeyModalOpen(true)}
-            className="w-full flex items-center gap-2 p-3 hover:bg-zinc-700 text-gray-300 text-sm"
+            className="w-full flex items-center gap-2 p-2.5 hover:bg-zinc-800 text-gray-300 text-sm"
           >
-            <Settings size={16} />
+            <Settings size={15} />
             <span>API Key Settings</span>
           </button>
           
-          <button className="w-full flex items-center gap-2 p-3 hover:bg-zinc-700 text-gray-300 text-sm">
-            <User size={16} />
+          <button className="w-full flex items-center gap-2 p-2.5 hover:bg-zinc-800 text-gray-300 text-sm">
+            <User size={15} />
             <span>Account</span>
           </button>
         </div>
@@ -61,7 +61,7 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
       
       {isMobile && isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed inset-0 bg-black bg-opacity-70 z-40"
           onClick={() => setIsOpen(false)}
         />
       )}

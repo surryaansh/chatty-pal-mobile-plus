@@ -14,23 +14,23 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ toggleSidebar }: ChatHeaderProps) => {
   return (
-    <div className="flex items-center justify-between p-4 border-b border-zinc-700">
+    <div className="flex items-center justify-between p-3 border-b border-zinc-700">
       <button
         onClick={toggleSidebar}
         className="text-white p-1.5 hover:bg-zinc-700 rounded-md"
       >
-        <Menu size={20} />
+        <Menu size={18} />
       </button>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2 text-white hover:bg-zinc-700 py-1.5 px-3 rounded-md">
-            <span>New chat</span>
-            <ChevronDown size={16} className="text-zinc-400" />
+            <span className="text-sm font-medium">New chat</span>
+            <ChevronDown size={14} className="text-zinc-400" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 bg-chatgpt-button border border-zinc-700">
-          <DropdownMenuItem className="text-white hover:bg-zinc-700 focus:bg-zinc-700">Clear conversations</DropdownMenuItem>
+        <DropdownMenuContent className="w-56 bg-zinc-800 border border-zinc-700">
+          <DropdownMenuItem className="text-white hover:bg-zinc-700 focus:bg-zinc-700 text-sm">Clear conversations</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       

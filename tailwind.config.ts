@@ -27,7 +27,7 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				chatgpt: {
 					dark: '#1E1E1E',
-					darker: '#0F0F0F',  // Darker background
+					darker: '#0F0F0F',
 					sidebar: '#202123',
 					input: '#40414F',
 					button: '#343541',
@@ -59,6 +59,10 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
+				},
+				zinc: {
+					'800': '#27272a',
+					'900': '#18181b',
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
