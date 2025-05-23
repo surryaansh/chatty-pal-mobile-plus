@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Message, SenderType, ChatSession } from './types';
 import Header from './components/Header';
@@ -88,7 +87,6 @@ const App: React.FC = () => {
     };
 
     let currentSessionId = activeChatId;
-    let newSessionCreated = false;
 
     // Update current messages for immediate UI feedback
     setCurrentMessages(prevMessages => [...prevMessages, userMessage]);
@@ -103,7 +101,6 @@ const App: React.FC = () => {
       };
       setAllChatSessions(prevSessions => [...prevSessions, newSession]);
       setActiveChatId(currentSessionId);
-      newSessionCreated = true;
     } else { // Existing chat session
       setAllChatSessions(prevSessions =>
         prevSessions.map(session =>
@@ -133,7 +130,6 @@ const App: React.FC = () => {
             )
           );
     }
-
 
     let accumulatedAiText = '';
     try {
@@ -220,7 +216,6 @@ const App: React.FC = () => {
 
   const showWelcome = !activeChatId && currentMessages.length === 0 && chatReady;
   const showApiErrorWelcome = currentMessages.length === 1 && currentMessages[0].text.includes("API key") && !chatReady;
-
 
   return (
     <div className="flex flex-col h-screen max-h-screen bg-[#2D2A32] overflow-hidden">
