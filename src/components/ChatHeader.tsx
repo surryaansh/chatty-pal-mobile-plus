@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { ChevronDown, Menu } from 'lucide-react';
 import { 
   DropdownMenu, 
@@ -25,13 +25,12 @@ const ChatHeader = ({ toggleSidebar }: ChatHeaderProps) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2 text-white hover:bg-zinc-700 py-1.5 px-3 rounded-md">
-            <span>ChatGPT</span>
+            <span>New chat</span>
             <ChevronDown size={16} className="text-zinc-400" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 bg-chatgpt-button border border-zinc-700">
-          <DropdownMenuItem className="text-white hover:bg-zinc-700 focus:bg-zinc-700">GPT-3.5</DropdownMenuItem>
-          <DropdownMenuItem className="text-white hover:bg-zinc-700 focus:bg-zinc-700">GPT-4</DropdownMenuItem>
+          <DropdownMenuItem className="text-white hover:bg-zinc-700 focus:bg-zinc-700">Clear conversations</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       

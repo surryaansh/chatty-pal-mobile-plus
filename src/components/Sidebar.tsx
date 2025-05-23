@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Plus, Settings, MessageSquare } from 'lucide-react';
+import { Plus, Settings, MessageSquare, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ApiKeyModal from './ApiKeyModal';
@@ -31,22 +31,30 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
         </div>
         
         <div className="flex-1 overflow-y-auto p-2">
-          <div className="space-y-2">
-            {/* Recent conversations would go here */}
-            <button className="w-full flex items-center gap-2 p-3 hover:bg-zinc-700 rounded-md text-gray-300 text-sm">
+          <div className="space-y-1">
+            <button className="w-full flex items-center gap-2 p-3 rounded-md text-gray-300 text-sm hover:bg-zinc-700">
               <MessageSquare size={16} />
               <span className="text-left truncate">Previous conversation 1</span>
+            </button>
+            <button className="w-full flex items-center gap-2 p-3 rounded-md text-gray-300 text-sm hover:bg-zinc-700">
+              <MessageSquare size={16} />
+              <span className="text-left truncate">Previous conversation 2</span>
             </button>
           </div>
         </div>
         
-        <div className="mt-auto p-3">
+        <div className="mt-auto border-t border-zinc-700">
           <button 
             onClick={() => setIsApiKeyModalOpen(true)}
-            className="w-full flex items-center gap-2 p-3 hover:bg-zinc-700 rounded-md text-gray-300 text-sm"
+            className="w-full flex items-center gap-2 p-3 hover:bg-zinc-700 text-gray-300 text-sm"
           >
             <Settings size={16} />
             <span>API Key Settings</span>
+          </button>
+          
+          <button className="w-full flex items-center gap-2 p-3 hover:bg-zinc-700 text-gray-300 text-sm">
+            <User size={16} />
+            <span>Account</span>
           </button>
         </div>
       </div>

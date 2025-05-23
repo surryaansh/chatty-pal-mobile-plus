@@ -4,8 +4,8 @@ import React from 'react';
 const WelcomeScreen = () => {
   return (
     <div className="flex flex-col items-center justify-center h-full px-4 text-center">
-      <h1 className="text-4xl font-bold mb-6 text-white">What can I help with?</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl w-full">
+      <h1 className="text-4xl font-bold mb-6 text-white">ChatGPT</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl w-full mb-8">
         {suggestedPrompts.map((prompt, index) => (
           <button
             key={index}
@@ -15,6 +15,9 @@ const WelcomeScreen = () => {
             <p className="text-sm text-gray-400">{prompt.description}</p>
           </button>
         ))}
+      </div>
+      <div className="text-sm text-gray-500 max-w-md">
+        ChatGPT can make mistakes. Consider checking important information.
       </div>
     </div>
   );
@@ -36,14 +39,6 @@ const suggestedPrompts = [
   {
     title: "Travel planning",
     description: "Plan a 7-day trip to Japan"
-  },
-  {
-    title: "Recipe ideas",
-    description: "Suggest a healthy dinner with ingredients I might have at home"
-  },
-  {
-    title: "Language learning",
-    description: "Help me practice basic Spanish conversation"
   },
 ];
 

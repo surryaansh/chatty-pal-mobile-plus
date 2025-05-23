@@ -40,19 +40,19 @@ const Index = () => {
         <ChatHeader toggleSidebar={toggleSidebar} />
         
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto pt-4 pb-32">
           {messages.length === 0 ? (
             <WelcomeScreen />
           ) : (
-            <div className="pb-20">
+            <div>
               {messages.map(message => (
                 <ChatMessage key={message.id} message={message} />
               ))}
               {isLoading && (
                 <div className="py-6 bg-zinc-800/30">
-                  <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
+                  <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex gap-4">
-                      <div className="w-8 h-8 rounded-sm flex items-center justify-center bg-green-600 text-white">
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center bg-teal-500 text-white text-xs">
                         AI
                       </div>
                       <div className="flex-1 pt-2">
@@ -68,7 +68,7 @@ const Index = () => {
         </div>
         
         {/* Chat Input */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-chatgpt-darker via-chatgpt-darker to-transparent pt-6 pb-3">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-chatgpt-darker via-chatgpt-darker to-transparent pt-10 pb-3">
           <ChatInput onSendMessage={sendMessage} disabled={isLoading} />
         </div>
       </div>
