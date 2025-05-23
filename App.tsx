@@ -10,7 +10,7 @@ import {
   initChatSession, 
   sendMessageStream, 
   isChatAvailable as checkChatAvailability,
-  startNewGeminiChatSession // Import new function
+  startNewGeminiChatSession
 } from './services/geminiService';
 
 const generateChatTitle = (firstMessageText: string): string => {
@@ -50,7 +50,7 @@ const App: React.FC = () => {
       }
     };
     initializeApp();
-  }, []); // Removed currentMessages dependency
+  }, []); 
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -216,7 +216,7 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [chatReady, activeChatId]); // allChatSessions removed from dependencies to prevent potential loops with setAllChatSessions
+  }, [chatReady, activeChatId]);
 
   const showWelcome = !activeChatId && currentMessages.length === 0 && chatReady;
   const showApiErrorWelcome = currentMessages.length === 1 && currentMessages[0].text.includes("API key") && !chatReady;

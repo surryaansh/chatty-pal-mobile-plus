@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 import { Message, SenderType } from '../types';
 import ChatMessage from './ChatMessage';
@@ -33,7 +34,6 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({ messages, isLoadingAi
           />
         );
       })}
-      {/* The old separate loading indicator block has been removed as it's now integrated into ChatMessage */}
       <div ref={messagesEndRef} />
     </div>
   );

@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { IconHeart, IconSend } from '../constants'; // IconPlus removed, IconHeart added
+import { IconHeart, IconSend } from '../constants';
 
 interface ChatInputBarProps {
   onSendMessage: (message: string) => void;
@@ -32,9 +33,9 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({ onSendMessage, isLoading, i
         <button 
           className="p-2 text-[#A09CB0] hover:text-[#FF8DC7] disabled:opacity-50" 
           disabled={isLoading || !isChatAvailable}
-          aria-label="More options" // Changed aria-label
+          aria-label="More options"
         >
-          <IconHeart className="w-6 h-6" /> {/* Replaced IconPlus with IconHeart */}
+          <IconHeart className="w-6 h-6" />
         </button>
         <input
           type="text"

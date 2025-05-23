@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Message, SenderType } from '../types';
 
@@ -6,7 +7,7 @@ interface ChatMessageProps {
   isCurrentlyLoading?: boolean; // Prop to indicate if this specific AI message should show loading dots
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, isCurrentlyLoading }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, isCurrentlyLoading = false }) => {
   const isUser = message.sender === SenderType.USER;
 
   return (
