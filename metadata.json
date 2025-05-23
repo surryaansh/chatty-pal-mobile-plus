@@ -1,0 +1,5 @@
+
+{
+  "name": "Gemini Chat Replica",
+  "description": "A web application that replicates the ChatGPT mobile UI, powered by the Gemini API for conversational AI. It features a clean, dark-themed interface for sending messages and receiving streamed responses."
+}
