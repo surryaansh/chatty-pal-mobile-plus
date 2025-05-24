@@ -5,12 +5,6 @@ import WelcomeMessage from './components/WelcomeMessage';
 import ChatMessageList from './components/ChatMessageList';
 import ChatInputBar from './components/ChatInputBar';
 import Sidebar from './components/Sidebar';
-import { 
-  initChatSession, 
-  sendMessageStream, 
-  isChatAvailable as checkChatAvailability,
-  startNewGeminiChatSession
-} from './services/openaiService';
 
 const generateChatTitle = (firstMessageText: string): string => {
   if (!firstMessageText) return `Chat @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
