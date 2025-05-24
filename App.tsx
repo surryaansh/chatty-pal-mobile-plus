@@ -9,10 +9,7 @@ import Sidebar from './components/Sidebar';
 const generateChatTitle = (firstMessageText: string): string => {
   if (!firstMessageText) return `Chat @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   const words = firstMessageText.split(' ');
-  if (words.length > 4) {
-    return words.slice(0, 4).join(' ') + '...';
-  }
-  return firstMessageText;
+  return words.length > 4 ? words.slice(0, 4).join(' ') + '...' : firstMessageText;
 };
 
 const App: React.FC = () => {
@@ -20,39 +17,16 @@ const App: React.FC = () => {
   const [allChatSessions, setAllChatSessions] = useState<ChatSession[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [chatReady, setChatReady] = useState<boolean>(false);
+  const [chatReady, setChatReady] = useState<boolean>(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    const initializeApp = async () => {
-      const available = checkChatAvailability();
-      if (available) {
-        const ready = await initChatSession();
-        setChatReady(ready);
-        if (ready && currentMessages.length > 0 && currentMessages[0].text.includes("API key")) {
-          setCurrentMessages([]);
-        }
-      } else {
-        setChatReady(false);
-        setCurrentMessages([{
-          id: crypto.randomUUID(),
-          text: "Oh no! SuruGPT can't connect right now. Please tell my human to check the API key settings! ✨",
-          sender: SenderType.AI,
-          timestamp: new Date()
-        }]);
-      }
-    };
-    initializeApp();
-  }, []);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleNewChat = async () => {
+  const handleNewChat = () => {
     setCurrentMessages([]);
     setActiveChatId(null);
-    await startNewGeminiChatSession();
     setChatReady(true);
     setIsSidebarOpen(false);
   };
@@ -80,7 +54,7 @@ const App: React.FC = () => {
     };
 
     let currentSessionId = activeChatId;
-    setCurrentMessages(prevMessages => [...prevMessages, userMessage]);
+    setCurrentMessages(prev => [...prev, userMessage]);
 
     if (!currentSessionId) {
       currentSessionId = crypto.randomUUID();
@@ -102,7 +76,6 @@ const App: React.FC = () => {
       );
     }
 
-    setIsLoading(true);
     const aiMessageId = crypto.randomUUID();
     const aiPlaceholderMessage: Message = {
       id: aiMessageId, text: '', sender: SenderType.AI, timestamp: new Date()
@@ -117,80 +90,26 @@ const App: React.FC = () => {
       )
     );
 
-    let accumulatedAiText = '';
+    setIsLoading(true);
+
     try {
-      const conversationHistory = currentMessages.filter(msg =>
-        msg.id !== userMessage.id && msg.id !== aiMessageId
-      );
+      const conversationHistory = currentMessages.map(msg => ({
+        role: msg.sender === SenderType.USER ? 'user' : 'assistant',
+        content: msg.text,
+      }));
 
-      const aiResponse = await sendMessage(newUserMessage.text, currentMessages);
-            const updatedAiMessage = { ...aiPlaceholderMessage, text: accumulatedAiText, timestamp: new Date() };
+      const response = await fetch('/functions/v1/chat-with-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, conversationHistory }),
+      });
 
-            setCurrentMessages(prev =>
-              prev.map(msg => (msg.id === aiMessageId ? updatedAiMessage : msg))
-            );
-            setAllChatSessions(prev =>
-              prev.map(session =>
-                session.id === currentSessionId
-                  ? {
-                      ...session,
-                      messages: session.messages.map(msg =>
-                        msg.id === aiMessageId ? updatedAiMessage : msg
-                      ),
-                    }
-                  : session
-              )
-            );
-          }
-        }
+      const data = await response.json();
+      const aiText = data.response;
 
-        if (accumulatedAiText.trim() === '') {
-          const fallbackMsg = "Hmm, SuruGPT is a bit puzzled. Could you try asking in a different way? 🤔";
-          const updatedFallbackMessage = { ...aiPlaceholderMessage, text: fallbackMsg, timestamp: new Date() };
-          setCurrentMessages(prev =>
-            prev.map(msg => (msg.id === aiMessageId ? updatedFallbackMessage : msg))
-          );
-          setAllChatSessions(prev =>
-            prev.map(session =>
-              session.id === currentSessionId
-                ? {
-                    ...session,
-                    messages: session.messages.map(msg =>
-                      msg.id === aiMessageId ? updatedFallbackMessage : msg
-                    )
-                  }
-                : session
-            )
-          );
-        }
-      } else {
-        const errorMsg = "It seems there was a hiccup sending your message to SuruGPT! Please try again. 🚧";
-        const updatedErrorMessage = { ...aiPlaceholderMessage, text: errorMsg, timestamp: new Date() };
-        setCurrentMessages(prev =>
-          prev.map(msg => (msg.id === aiMessageId ? updatedErrorMessage : msg))
-        );
-        setAllChatSessions(prev =>
-          prev.map(session =>
-            session.id === currentSessionId
-              ? {
-                  ...session,
-                  messages: session.messages.map(msg =>
-                    msg.id === aiMessageId ? updatedErrorMessage : msg
-                  )
-                }
-              : session
-          )
-        );
-      }
-    } catch (error) {
-      console.error('Error streaming response:', error);
-      const errorText =
-        error instanceof Error && error.message.startsWith("Error:")
-          ? error.message
-          : "SuruGPT encountered a little problem! Please try again. 🛠️";
-      const finalErrorMessage = { ...aiPlaceholderMessage, text: errorText, timestamp: new Date() };
+      const updatedAiMessage = { ...aiPlaceholderMessage, text: aiText, timestamp: new Date() };
       setCurrentMessages(prev =>
-        prev.map(msg => (msg.id === aiMessageId ? finalErrorMessage : msg))
+        prev.map(msg => (msg.id === aiMessageId ? updatedAiMessage : msg))
       );
       setAllChatSessions(prev =>
         prev.map(session =>
@@ -198,8 +117,27 @@ const App: React.FC = () => {
             ? {
                 ...session,
                 messages: session.messages.map(msg =>
-                  msg.id === aiMessageId ? finalErrorMessage : msg
-                )
+                  msg.id === aiMessageId ? updatedAiMessage : msg
+                ),
+              }
+            : session
+        )
+      );
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const fallbackMsg = "SuruGPT encountered a problem. Please try again! 🛠️";
+      const errorMessage = { ...aiPlaceholderMessage, text: fallbackMsg, timestamp: new Date() };
+      setCurrentMessages(prev =>
+        prev.map(msg => (msg.id === aiMessageId ? errorMessage : msg))
+      );
+      setAllChatSessions(prev =>
+        prev.map(session =>
+          session.id === currentSessionId
+            ? {
+                ...session,
+                messages: session.messages.map(msg =>
+                  msg.id === aiMessageId ? errorMessage : msg
+                ),
               }
             : session
         )
@@ -210,7 +148,6 @@ const App: React.FC = () => {
   }, [chatReady, activeChatId, currentMessages]);
 
   const showWelcome = !activeChatId && currentMessages.length === 0 && chatReady;
-  const showApiErrorWelcome = currentMessages.length === 1 && currentMessages[0].text.includes("API key") && !chatReady;
 
   return (
     <div className="flex flex-col h-screen max-h-screen bg-[#2D2A32] overflow-hidden">
@@ -232,9 +169,7 @@ const App: React.FC = () => {
       <div className="relative z-10 flex flex-col flex-grow h-full bg-[#393641]">
         <Header onToggleSidebar={handleToggleSidebar} />
         <main className="flex-grow flex flex-col overflow-hidden">
-          {showApiErrorWelcome ? (
-            <WelcomeMessage message={currentMessages[0].text} />
-          ) : showWelcome ? (
+          {showWelcome ? (
             <WelcomeMessage />
           ) : (
             <>
