@@ -10,7 +10,7 @@ import {
   sendMessageStream, 
   isChatAvailable as checkChatAvailability,
   startNewGeminiChatSession
-} from './services/geminiService';
+} from './services/openaiService';
 
 const generateChatTitle = (firstMessageText: string): string => {
   if (!firstMessageText) return `Chat @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
@@ -75,7 +75,6 @@ const App: React.FC = () => {
   const handleSendMessage = useCallback(async (text: string) => {
     if (!chatReady) {
       console.warn("Chat is not ready. Cannot send message.");
-      // Add an error message to currentMessages if needed
       return;
     }
 
@@ -121,7 +120,7 @@ const App: React.FC = () => {
     setCurrentMessages(prevMessages => [...prevMessages, aiPlaceholderMessage]);
     
     // Add AI placeholder to allChatSessions
-    if (currentSessionId) { // Should always be true here
+    if (currentSessionId) {
         setAllChatSessions(prevSessions =>
             prevSessions.map(session =>
               session.id === currentSessionId
@@ -133,7 +132,12 @@ const App: React.FC = () => {
 
     let accumulatedAiText = '';
     try {
-      const stream = await sendMessageStream(text);
+      // Get conversation history for context (excluding the current user message and AI placeholder)
+      const conversationHistory = currentMessages.filter(msg => 
+        msg.id !== userMessage.id && msg.id !== aiMessageId
+      );
+
+      const stream = await sendMessageStream(text, conversationHistory);
       if (stream) {
         for await (const chunk of stream) {
           const chunkText = chunk.text;
@@ -212,7 +216,7 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [chatReady, activeChatId]);
+  }, [chatReady, activeChatId, currentMessages]);
 
   const showWelcome = !activeChatId && currentMessages.length === 0 && chatReady;
   const showApiErrorWelcome = currentMessages.length === 1 && currentMessages[0].text.includes("API key") && !chatReady;
