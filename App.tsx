@@ -35,8 +35,8 @@ const App: React.FC = () => {
       if (available) {
         const ready = await initChatSession();
         setChatReady(ready);
-        if(ready && currentMessages.length > 0 && currentMessages[0].text.includes("API key")) {
-            setCurrentMessages([]); // Clear API key message if chat is now ready
+        if (ready && currentMessages.length > 0 && currentMessages[0].text.includes("API key")) {
+          setCurrentMessages([]);
         }
       } else {
         setChatReady(false);
@@ -49,7 +49,7 @@ const App: React.FC = () => {
       }
     };
     initializeApp();
-  }, []); 
+  }, []);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -58,15 +58,15 @@ const App: React.FC = () => {
   const handleNewChat = async () => {
     setCurrentMessages([]);
     setActiveChatId(null);
-    await startNewGeminiChatSession(); // Reset AI's context
-    setChatReady(true); // Assume chat is ready after reset if API key is valid
+    await startNewGeminiChatSession();
+    setChatReady(true);
     setIsSidebarOpen(false);
   };
 
   const handleSelectChat = (chatId: string) => {
     const selectedSession = allChatSessions.find(session => session.id === chatId);
     if (selectedSession) {
-      setCurrentMessages([...selectedSession.messages]); // Load messages from selected session
+      setCurrentMessages([...selectedSession.messages]);
       setActiveChatId(chatId);
     }
     setIsSidebarOpen(false);
@@ -86,11 +86,9 @@ const App: React.FC = () => {
     };
 
     let currentSessionId = activeChatId;
-
-    // Update current messages for immediate UI feedback
     setCurrentMessages(prevMessages => [...prevMessages, userMessage]);
 
-    if (!currentSessionId) { // New chat session
+    if (!currentSessionId) {
       currentSessionId = crypto.randomUUID();
       const newSession: ChatSession = {
         id: currentSessionId,
@@ -98,42 +96,36 @@ const App: React.FC = () => {
         messages: [userMessage],
         createdAt: new Date(),
       };
-      setAllChatSessions(prevSessions => [...prevSessions, newSession]);
+      setAllChatSessions(prev => [...prev, newSession]);
       setActiveChatId(currentSessionId);
-    } else { // Existing chat session
-      setAllChatSessions(prevSessions =>
-        prevSessions.map(session =>
+    } else {
+      setAllChatSessions(prev =>
+        prev.map(session =>
           session.id === currentSessionId
             ? { ...session, messages: [...session.messages, userMessage] }
             : session
         )
       );
     }
-    
+
     setIsLoading(true);
     const aiMessageId = crypto.randomUUID();
-    const aiPlaceholderMessage: Message = { 
-      id: aiMessageId, text: '', sender: SenderType.AI, timestamp: new Date() 
+    const aiPlaceholderMessage: Message = {
+      id: aiMessageId, text: '', sender: SenderType.AI, timestamp: new Date()
     };
 
-    // Add AI placeholder to currentMessages
-    setCurrentMessages(prevMessages => [...prevMessages, aiPlaceholderMessage]);
-    
-    // Add AI placeholder to allChatSessions
-    if (currentSessionId) {
-        setAllChatSessions(prevSessions =>
-            prevSessions.map(session =>
-              session.id === currentSessionId
-                ? { ...session, messages: [...session.messages, aiPlaceholderMessage] }
-                : session
-            )
-          );
-    }
+    setCurrentMessages(prev => [...prev, aiPlaceholderMessage]);
+    setAllChatSessions(prev =>
+      prev.map(session =>
+        session.id === currentSessionId
+          ? { ...session, messages: [...session.messages, aiPlaceholderMessage] }
+          : session
+      )
+    );
 
     let accumulatedAiText = '';
     try {
-      // Get conversation history for context (excluding the current user message and AI placeholder)
-      const conversationHistory = currentMessages.filter(msg => 
+      const conversationHistory = currentMessages.filter(msg =>
         msg.id !== userMessage.id && msg.id !== aiMessageId
       );
 
@@ -144,75 +136,85 @@ const App: React.FC = () => {
           if (chunkText) {
             accumulatedAiText += chunkText;
             const updatedAiMessage = { ...aiPlaceholderMessage, text: accumulatedAiText, timestamp: new Date() };
-            
-            setCurrentMessages(prevMessages =>
-              prevMessages.map(msg => (msg.id === aiMessageId ? updatedAiMessage : msg))
+
+            setCurrentMessages(prev =>
+              prev.map(msg => (msg.id === aiMessageId ? updatedAiMessage : msg))
             );
-            
-            if (currentSessionId) {
-              setAllChatSessions(prevSessions =>
-                prevSessions.map(session =>
-                  session.id === currentSessionId
-                    ? {
-                        ...session,
-                        messages: session.messages.map(msg =>
-                          msg.id === aiMessageId ? updatedAiMessage : msg
-                        ),
-                      }
-                    : session
-                )
-              );
-            }
+            setAllChatSessions(prev =>
+              prev.map(session =>
+                session.id === currentSessionId
+                  ? {
+                      ...session,
+                      messages: session.messages.map(msg =>
+                        msg.id === aiMessageId ? updatedAiMessage : msg
+                      ),
+                    }
+                  : session
+              )
+            );
           }
         }
+
         if (accumulatedAiText.trim() === '') {
           const fallbackMsg = "Hmm, SuruGPT is a bit puzzled. Could you try asking in a different way? 🤔";
           const updatedFallbackMessage = { ...aiPlaceholderMessage, text: fallbackMsg, timestamp: new Date() };
-          setCurrentMessages(prevMessages =>
-            prevMessages.map(msg => (msg.id === aiMessageId ? updatedFallbackMessage : msg))
+          setCurrentMessages(prev =>
+            prev.map(msg => (msg.id === aiMessageId ? updatedFallbackMessage : msg))
           );
-          if (currentSessionId) {
-            setAllChatSessions(prevSessions =>
-                prevSessions.map(session =>
-                  session.id === currentSessionId
-                    ? { ...session, messages: session.messages.map(msg => msg.id === aiMessageId ? updatedFallbackMessage : msg) }
-                    : session
-                )
-            );
-          }
+          setAllChatSessions(prev =>
+            prev.map(session =>
+              session.id === currentSessionId
+                ? {
+                    ...session,
+                    messages: session.messages.map(msg =>
+                      msg.id === aiMessageId ? updatedFallbackMessage : msg
+                    )
+                  }
+                : session
+            )
+          );
         }
       } else {
         const errorMsg = "It seems there was a hiccup sending your message to SuruGPT! Please try again. 🚧";
         const updatedErrorMessage = { ...aiPlaceholderMessage, text: errorMsg, timestamp: new Date() };
-        setCurrentMessages(prevMessages =>
-            prevMessages.map(msg => (msg.id === aiMessageId ? updatedErrorMessage : msg))
+        setCurrentMessages(prev =>
+          prev.map(msg => (msg.id === aiMessageId ? updatedErrorMessage : msg))
         );
-        if (currentSessionId) {
-            setAllChatSessions(prevSessions =>
-                prevSessions.map(session =>
-                  session.id === currentSessionId
-                    ? { ...session, messages: session.messages.map(msg => msg.id === aiMessageId ? updatedErrorMessage : msg) }
-                    : session
-                )
-            );
-        }
+        setAllChatSessions(prev =>
+          prev.map(session =>
+            session.id === currentSessionId
+              ? {
+                  ...session,
+                  messages: session.messages.map(msg =>
+                    msg.id === aiMessageId ? updatedErrorMessage : msg
+                  )
+                }
+              : session
+          )
+        );
       }
     } catch (error) {
       console.error('Error streaming response:', error);
-      const errorText = error instanceof Error && error.message.startsWith("Error:") ? error.message : "SuruGPT encountered a little problem! Please try again. 🛠️";
+      const errorText =
+        error instanceof Error && error.message.startsWith("Error:")
+          ? error.message
+          : "SuruGPT encountered a little problem! Please try again. 🛠️";
       const finalErrorMessage = { ...aiPlaceholderMessage, text: errorText, timestamp: new Date() };
-      setCurrentMessages(prevMessages =>
-        prevMessages.map(msg => (msg.id === aiMessageId ? finalErrorMessage : msg))
+      setCurrentMessages(prev =>
+        prev.map(msg => (msg.id === aiMessageId ? finalErrorMessage : msg))
       );
-       if (currentSessionId) {
-            setAllChatSessions(prevSessions =>
-                prevSessions.map(session =>
-                  session.id === currentSessionId
-                    ? { ...session, messages: session.messages.map(msg => msg.id === aiMessageId ? finalErrorMessage : msg) }
-                    : session
+      setAllChatSessions(prev =>
+        prev.map(session =>
+          session.id === currentSessionId
+            ? {
+                ...session,
+                messages: session.messages.map(msg =>
+                  msg.id === aiMessageId ? finalErrorMessage : msg
                 )
-            );
-        }
+              }
+            : session
+        )
+      );
     } finally {
       setIsLoading(false);
     }
@@ -241,13 +243,17 @@ const App: React.FC = () => {
       <div className="relative z-10 flex flex-col flex-grow h-full bg-[#393641]">
         <Header onToggleSidebar={handleToggleSidebar} />
         <main className="flex-grow flex flex-col overflow-hidden">
-          {showWelcome || showApiErrorWelcome ? ( 
-             showApiErrorWelcome && !chatReady ? <ChatMessageList messages={currentMessages} isLoadingAiResponse={false} /> : <WelcomeMessage />
+          {showApiErrorWelcome ? (
+            <WelcomeMessage message={currentMessages[0].text} />
+          ) : showWelcome ? (
+            <WelcomeMessage />
           ) : (
-            <ChatMessageList messages={currentMessages} isLoadingAiResponse={isLoading} />
+            <>
+              <ChatMessageList messages={currentMessages} />
+              <ChatInputBar isLoading={isLoading} onSend={handleSendMessage} />
+            </>
           )}
         </main>
-        <ChatInputBar onSendMessage={handleSendMessage} isLoading={isLoading} isChatAvailable={chatReady} />
       </div>
     </div>
   );
