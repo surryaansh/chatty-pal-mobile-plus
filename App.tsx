@@ -130,7 +130,6 @@ const App: React.FC = () => {
       );
 
       const stream = await sendMessageStream(text, conversationHistory);
-      if (stream) {
         for await (const chunk of stream) {
           const chunkText = chunk.text;
           if (chunkText) {
