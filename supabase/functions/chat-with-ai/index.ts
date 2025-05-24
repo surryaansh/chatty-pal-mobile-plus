@@ -9,7 +9,7 @@ serve(async (req) => {
   const { message, conversationHistory } = await req.json();
 
   const completion = await openai.chat.completions.create({
-    model: "gpt-4o", // ✅ GPT-4o
+    model: "gpt-4o", // ✅ Use GPT-4o
     messages: [
       ...conversationHistory,
       { role: "user", content: message },
