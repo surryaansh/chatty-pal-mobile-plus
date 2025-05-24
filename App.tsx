@@ -129,11 +129,7 @@ const App: React.FC = () => {
         msg.id !== userMessage.id && msg.id !== aiMessageId
       );
 
-      const stream = await sendMessageStream(text, conversationHistory);
-        for await (const chunk of stream) {
-          const chunkText = chunk.text;
-          if (chunkText) {
-            accumulatedAiText += chunkText;
+      const aiResponse = await sendMessage(newUserMessage.text, currentMessages);
             const updatedAiMessage = { ...aiPlaceholderMessage, text: accumulatedAiText, timestamp: new Date() };
 
             setCurrentMessages(prev =>
